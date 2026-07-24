@@ -7,3 +7,6 @@
     - name: Ping
       ansible.builtin.ping:
   
+    - name: Ping
+      ansible.builtin.ping:
+  
