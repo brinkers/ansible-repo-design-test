@@ -1,0 +1,54 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to promote'
+        required: true
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create PR from develop to main
+        id: pr
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: develop
+          destination_branch: main
+          pr_title: 'Promote version ${{ github.event.inputs.version }} to production'
+          pr_body: 'This PR promotes version ${{ github.event.inputs.version }} from develop to main.'
+
+      - name: Wait for PR Appoval
+        uses: juliangruber/wait-for-approval@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-request-number: ${{ steps.pr.outputs.pull-request-number }}
+
+      - name: Merge PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: ${{ steps.pr.outputs.pr_number }},
+              merge_method: "merge"
+            })
+
+      - name: Create Release Tag
+        run: |
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}            
+
+        
+    

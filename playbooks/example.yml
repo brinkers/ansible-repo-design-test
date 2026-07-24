@@ -1,0 +1,9 @@
+---
+- name: Example Playbook
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Ping
+      ansible.builtin.ping:
+  

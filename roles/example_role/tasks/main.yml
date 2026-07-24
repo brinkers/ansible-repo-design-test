@@ -1,0 +1,5 @@
+---
+- name: Example Role Task
+  ansible.builtin.debug:
+    msg: "This is a task from the example role."
+
