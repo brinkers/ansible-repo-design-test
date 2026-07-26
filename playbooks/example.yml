@@ -4,9 +4,6 @@
   gather_facts: false
 
   tasks:
-    - name: Ping
-      ansible.builtin.ping:
-  
-    - name: Ping
-      ansible.builtin.ping:
-  
+    - name: Show message
+      ansible.builtin.debug:
+        msg: "counter is 1"
